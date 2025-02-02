@@ -9,29 +9,28 @@ class GenNumber extends React.Component {
     setTimeout(function () {
       number.innerHTML = number.innerHTML.replace(/\w/gi, '&#183;');
     }, time);
-  }
 
+  }
   componentDidMount() {
     let number = document.getElementById('number');
     setTimeout(function () {
       number.innerHTML = number.innerHTML.replace(/\w|\W/gi, '&#183;');
     }, 1200);
   }
-
   render() {
-    return (
-      <div className="app__gen-number">
-        <div className="app__info">
-          <p className="app__level">مرحله: {this.props.level.main} - {this.props.level.sub}</p>
-          <p className="app__wrong">اشتباه: {this.props.wrong}/3</p>
-        </div>
-        <p className="app__divider">############################</p>
-        <p className="app__number" id="number">{this.props.wrong < 3 ? atob(this.props.question) : '????'}</p>
-        <p className="app__divider">############################</p>
-      </div>
-    );
-  }
-}
+    return /*#__PURE__*/(
+      React.createElement("div", { className: "app__gen-number" }, /*#__PURE__*/
+      React.createElement("div", { className: "app__info" }, /*#__PURE__*/
+      React.createElement("p", { className: "app__level" }, "مرحله: ", this.props.level.main, " - ", this.props.level.sub), /*#__PURE__*/
+      React.createElement("p", { className: "app__wrong" }, "اشتباه: ", this.props.wrong, "/3")), /*#__PURE__*/
+
+      React.createElement("p", { className: "app__divider" }, "############################"), /*#__PURE__*/
+      React.createElement("p", { className: "app__number", id: "number" }, this.props.wrong < 3 ? atob(this.props.question) : '????'), /*#__PURE__*/
+      React.createElement("p", { className: "app__divider" }, "############################")));
+
+
+  }}
+
 
 class InputNumber extends React.Component {
   constructor() {
@@ -39,52 +38,41 @@ class InputNumber extends React.Component {
     this.handleUserInput = this.handleUserInput.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
-
   handleUserInput(e) {
     e.preventDefault();
     let userNumber = btoa(this.userNumber.value);
     this.userNumber.value = "";
     this.props.compareUserInput(userNumber);
   }
-
   handleReset() {
     this.props.onReset();
   }
-
   render() {
     let layout;
     if (this.props.wrong < 3) {
-      layout = (
-        <div className="app__input">
-          <form onSubmit={this.handleUserInput}>
-            عدد چند بود ؟ :
-            <input
-              pattern="[0-9]+"
-              type="text"
-              ref={ref => this.userNumber = ref}
-              required
-              autoFocus
-            />
-            <br />
-            <br />
-          </form>
-          <button onClick={this.handleReset}>دوباره</button>
-        </div>
-      );
+      layout = /*#__PURE__*/React.createElement("div", { className: "app__input" }, /*#__PURE__*/
+      React.createElement("form", { onSubmit: this.handleUserInput }, "عدد چند بود ؟ : ", /*#__PURE__*/
+
+      React.createElement("input", {
+        pattern: "[0-9]+",
+        type: "text",
+        ref: ref => this.userNumber = ref,
+        required: true,
+        autoFocus: true }), /*#__PURE__*/
+      React.createElement("br", null), /*#__PURE__*/
+      React.createElement("br", null)), /*#__PURE__*/
+
+      React.createElement("button", { onClick: this.handleReset }, "دوباره"));
+
     } else {
-      layout = (
-        <div className="app__end">
-          <div className="app__notify">Better luck next time (\u2727\u03C9\u2727)</div>
-          <br />
-          <br />
-          <button onClick={this.handleReset}>Restart</button>
-        </div>
-      );
+      layout = /*#__PURE__*/React.createElement("div", { className: "app__end" }, /*#__PURE__*/
+      React.createElement("div", { class: "app__notify" }, "Better luck next time (\u2727\u03C9\u2727)"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("button", { onClick: this.handleReset }, "Restart"));
+
     }
 
     return layout;
-  }
-}
+  }}
+
 
 class App extends React.Component {
   constructor() {
@@ -95,89 +83,64 @@ class App extends React.Component {
     this.state = {
       question: btoa(this.randomGenerate(2)),
       level: { main: 1, sub: 1 },
-      wrong: 0,
-      correctAnswers: 0, // اضافه کردن شمارنده برای پاسخ‌های صحیح
-      bestScore: 0, // اضافه کردن رکورد
-    };
-  }
+      wrong: 0 };
 
+  }
   resetState() {
     this.setState({
       question: btoa(this.randomGenerate(2)),
       level: { main: 1, sub: 1 },
-      wrong: 0,
-      correctAnswers: 0, // بازنشانی پاسخ‌های صحیح هنگام شروع دوباره بازی
-    });
-  }
+      wrong: 0 });
 
+  }
   randomGenerate(digit) {
     let max = Math.pow(10, digit) - 1,
-      min = Math.pow(10, digit - 1);
+    min = Math.pow(10, digit - 1);
+
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-
   compareUserInput(userNumber) {
     let currQuestion = this.state.question,
-      mainLevel = this.state.level.main,
-      subLevel = this.state.level.sub,
-      wrong = this.state.wrong,
-      correctAnswers = this.state.correctAnswers,
-      bestScore = this.state.bestScore,
-      digit;
+    mainLevel = this.state.level.main,
+    subLevel = this.state.level.sub,
+    wrong = this.state.wrong,
+    digit;
 
     if (userNumber == currQuestion) {
-      // کاربر جواب درست داده است
-      correctAnswers++;
-
-      // بروزرسانی رکورد اگر تعداد پاسخ‌های صحیح جدید بیشتر از رکورد قبلی است
-      if (correctAnswers > bestScore) {
-        bestScore = correctAnswers;
-      }
-
       if (subLevel < 3) {
         ++subLevel;
-      } else if (subLevel == 3) {
+      } else
+      if (subLevel == 3) {
         ++mainLevel;
         subLevel = 1;
       }
     } else {
       ++wrong;
     }
-
     digit = mainLevel + 2;
 
     this.setState({
       question: btoa(this.randomGenerate(digit)),
       level: { main: mainLevel, sub: subLevel },
-      wrong: wrong,
-      correctAnswers: correctAnswers,
-      bestScore: bestScore, // ذخیره رکورد جدید
-    });
-  }
+      wrong: wrong });
 
+  }
   render() {
-    return (
-      <div className="main__app">
-        <GenNumber
-          question={this.state.question}
-          level={this.state.level}
-          wrong={this.state.wrong}
-        />
-        <InputNumber
-          compareUserInput={this.compareUserInput}
-          wrong={this.state.wrong}
-          onReset={this.resetState}
-        />
-        <div className="app__score">
-          <p>تعداد پاسخ‌های صحیح: {this.state.correctAnswers}</p>
-          <p>رکورد: {this.state.bestScore}</p>
-        </div>
-      </div>
-    );
-  }
-}
+    return /*#__PURE__*/(
+      React.createElement("div", { className: "main__app" }, /*#__PURE__*/
+      React.createElement(GenNumber, {
+        question: this.state.question,
+        level: this.state.level,
+        wrong: this.state.wrong }), /*#__PURE__*/
+      React.createElement(InputNumber, {
+        compareUserInput: this.compareUserInput,
+        wrong: this.state.wrong,
+        onReset: this.resetState })));
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('app')
-);
+
+  }}
+
+
+ReactDOM.render( /*#__PURE__*/
+React.createElement(App, null),
+document.getElementById('app'));
